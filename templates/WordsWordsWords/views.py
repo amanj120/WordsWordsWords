@@ -1,10 +1,10 @@
-from flask import request
+from flask import request, render_template
 from templates import app
 
 
 @app.route('/')
 def index():
-    return 'Hello'
+    return render_template('index.html')
 
 
 @app.route('/ping', methods=['GET'])
