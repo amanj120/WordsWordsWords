@@ -1,5 +1,4 @@
 from collections import defaultdict
-import json
 import re
 
 from bs4 import BeautifulSoup
@@ -36,8 +35,8 @@ def make_markov_model(words):
     freqs = {}
     for word, occ_dict in grams.items():
         total_occ = sum(occ_dict.values())
-        freqs[word] = [{'words': list(pair), 'freq': count / total_occ} for pair, count in occ_dict.items()]
-    return {'starters': list(starters), 'enders': list(enders), 'freqs': freqs}
+        freqs[word] = [{'words': {'first': first, 'second': second}, 'freq': count / total_occ} for (first, second), count in occ_dict.items()]
+    return ({'word': word for word in starters}, {'word': word for word in enders}, freqs)
 
 
 def scrape_shakespeare():
@@ -65,14 +64,9 @@ def scrape_shakespeare():
     return words
 
 
-def main():
-    print('Scraping:')
+def update_db(db):
     words = scrape_shakespeare()
-    print('Building model:')
-    model = make_markov_model(words)
-    print('Dumping:')
-    print(json.dumps(model))
-
-
-if __name__ == '__main__':
-    main()
+    starters, enders, freqs = make_markov_model(words)
+    db.starters.insertMany(starters)
+    db.enders.insertMany(enders)
+    db.freqs.insertMany(freqs)
