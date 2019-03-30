@@ -1,0 +1,16 @@
+{
+  "next": [
+    {
+      "data": "word1",
+      "freq": 0.24
+    },
+    {
+      "data": "word2",
+      "freq": 0.17
+    },
+    {
+      "data": "word2",
+      "freq": 0.14
+    }
+  ]
+}
