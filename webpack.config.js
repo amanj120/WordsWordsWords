@@ -19,13 +19,13 @@ module.exports = {
     extensions: ["*", ".js", ".jsx"]
   },
   output: {
-    path: __dirname + "/dist",
+    path: __dirname + "/prod",
     publicPath: "/",
     filename: "bundle.js"
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
   devServer: {
-    contentBase: "./dist",
+    contentBase: "./prod",
     hot: true
   }
 };
