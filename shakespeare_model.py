@@ -130,10 +130,12 @@ if __name__ == '__main__':
             admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
             db = admin_client.get_database()
             rand_starters = db.starters.aggregate([{'$sample': {'size': 20}}])
-            rand_freqs = db.freqs.aggregate([{'$sample': {'size': 20}}])
+            rand_freqs = db.freqs.aggregate([{'$sample': {'size': 5}}])
             print('starters\n--------------------')
             print([word['word'] for word in rand_starters])
-            print('freqs\n--------------------')
-            print([{'word': rel['word'], 'freq': rel['freq']} for rel in rand_freqs])
+            print('\nfreqs\n--------------------')
+            print([{'word': rel['word'], 'freqs': rel['freqs']} for rel in rand_freqs])
+        elif arg == '--help':
+            print('Possible commands:\n    --update-db\n    --sample-data')
         else:
             raise Exception('Invalid flag: ' + sys.argv[1])
