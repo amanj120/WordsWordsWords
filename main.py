@@ -8,7 +8,7 @@ RANDOM_SIZE = 20
 
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = 'mongodb://server/dbname'
+app.config['MONGO_URI'] = 'mongodb://35.231.223.163:/markov'
 mongo = PyMongo(app)
 
 
@@ -26,6 +26,7 @@ def index():
 
 @app.route('/words/<word>')
 def words(word):
+    word = word.lower()
     word_relation = mongo.db.freqs.find_one({'word': word})
     if not word_relation:
         rand_relations = mongo.db.freqs.aggregate({'$sample': {'size': RANDOM_SIZE}})
