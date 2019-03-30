@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
+from nltk.corpus import wordnet
 
 
 STARTER_SIZE = 20
@@ -9,6 +10,14 @@ RANDOM_SIZE = 20
 app = Flask(__name__)
 app.config['MONGO_URI'] = 'mongodb://server/dbname'
 mongo = PyMongo(app)
+
+
+def synonyms(word):
+    syn_sets = wordnet.synsets(word)
+    synonyms = set()
+    for syn_set in syn_sets or []:
+        for lemma in syn_set.lemmas():
+            synonyms.add(lemma.name())
 
 @app.route('/')
 def index():
