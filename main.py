@@ -18,6 +18,7 @@ def synonyms(word):
     for syn_set in syn_sets or []:
         for lemma in syn_set.lemmas():
             synonyms.add(lemma.name())
+    return synonyms
 
 @app.route('/')
 def index():
