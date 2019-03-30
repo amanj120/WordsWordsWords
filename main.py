@@ -41,9 +41,6 @@ def words(word):
 @app.route('/starters')
 def starters():
     rand_words = mongo.db.starters.aggregate([{'$sample': {'size': 20}}])
-    print([w for w in rand_words])
-    for word in rand_words:
-        print(word)
     return jsonify([word['word'] for word in rand_words])
 
 @app.route('/<other>')
@@ -52,12 +49,4 @@ def handleIllegalRequest(other):
 
 @app.route('/ping')
 def ping():
-    return mongo.db.name
-
-
-if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == '--update-db':
-        from shakespeare_model import update_db
-        update_db(mongo.db)
-    else:
-        app.run()
+    return "on database: " + mongo.db.name
