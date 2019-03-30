@@ -42,7 +42,7 @@ class App extends Component {
     return (
       <React.Fragment>
         <center>
-          <h1 className="fancy-font">Wordswordswords</h1>
+          <h1 className="fancy-font">Words Words Words</h1>
         </center>
         <hr />
         <p>Start typing a sentence</p>
