@@ -59,6 +59,4 @@ def handleIllegalRequest(_):
 
 @app.route('/ping')
 def ping():
-    return mongo.db.name
-
-
+    return "on database: " + mongo.db.name
