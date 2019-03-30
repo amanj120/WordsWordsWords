@@ -1,5 +1,3 @@
-import random
-
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
 
@@ -9,18 +7,15 @@ RANDOM_SIZE = 20
 
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = 'TODO'
+app.config['MONGO_URI'] = 'mongodb://server/dbname'
 mongo = PyMongo(app)
 
-starters = [word['word'] for word in mongo.db.starters.find({})]
-
-
 @app.route('/')
-def landingPage():
-    return 'welcome to words words words,\n a shakespeare markov chain api'
+def index():
+    return 'Welcome to WordsWordsWords,\n a Shakespeare Markov Chain API'
 
-@app.route('/getwords/<word>')
-def getwords(word):
+@app.route('/words/<word>')
+def words(word):
     word_relation = mongo.db.freqs.find_one({'word': word})
     if not word_relation:
         rand_relations = mongo.db.freqs.aggregate({'$sample': {'size': RANDOM_SIZE}})
@@ -29,14 +24,14 @@ def getwords(word):
     freq_pairs.sort(key=lambda f: -f['freq'])
     return jsonify(freq_pair['word'] for freq_pair in freq_pairs)
 
-@app.route('/getstarters')
-def getstarters():
-    words = random.sample(starters, STARTER_SIZE)
-    return jsonify(words)
+@app.route('/starters')
+def starters():
+    rand_words = mongo.db.starters.aggregate({'$sample': {'size': STARTER_SIZE}})
+    return jsonify(word['word'] for word in rand_words)
 
 @app.route('/<other>')
-def handleIllegalRequest(other):
-    return "Error 400"
+def handleIllegalRequest(_):
+    return "405: Restricted method"
 
 @app.route('/ping')
 def ping():
