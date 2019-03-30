@@ -19,24 +19,23 @@ def make_markov_model(words):
     if not words:
         return {}
     starters = set()
-    enders = set()
-    # {'a': {('b', 'c'): 1, ('d', 'e'): 2}}
+    # {'a': {'b': 1, 'd': 2}}
     grams = defaultdict(lambda: defaultdict(int))
     last_was_end = True
     for word in words:
         if is_end_word(word):
-            enders.add(word)
+            last_was_end = True
         elif last_was_end:
             starters.add(word)
             last_was_end = False
-    for i in range(len(words) - 2):
-        grams[words[i]][(words[i + 1], words[i + 2])] += 1
-    # {'a': [{'words': ['b', 'c'], 'freq': 0.333}, {'words': ['d', 'e'], 'freq': 0.666}]}
-    freqs = {}
+    for i in range(len(words) - 1):
+        grams[words[i]][(words[i + 1])] += 1
+    # {'word': 'a', 'freqs': [{'word': 'b', 'freq': 0.333}, {'word': 'd', 'freq': 0.666}]}
+    freqs = []
     for word, occ_dict in grams.items():
         total_occ = sum(occ_dict.values())
-        freqs[word] = [{'words': {'first': first, 'second': second}, 'freq': count / total_occ} for (first, second), count in occ_dict.items()]
-    return ({'word': word for word in starters}, {'word': word for word in enders}, freqs)
+        freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
+    return ({'word': word for word in starters}, freqs)
 
 
 def scrape_shakespeare():
@@ -66,7 +65,7 @@ def scrape_shakespeare():
 
 def update_db(db):
     words = scrape_shakespeare()
-    starters, enders, freqs = make_markov_model(words)
-    db.starters.insertMany(starters)
-    db.enders.insertMany(enders)
-    db.freqs.insertMany(freqs)
+    starters, freqs = make_markov_model(words)
+    db.freqs.insert_many(freqs)
+    db.starters.insert_many(starters)
+
