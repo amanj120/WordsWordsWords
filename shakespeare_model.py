@@ -1,4 +1,5 @@
 from collections import defaultdict
+import json
 import re
 
 from bs4 import BeautifulSoup
@@ -18,7 +19,7 @@ def is_end_word(word):
 def make_markov_model(words):
     if not words:
         return {}
-    words = [word.lower() for word in words]
+    words = [word.lower() for word in words if word != 'I']
     starters = set()
     # {'a': {'b': 1, 'd': 2}}
     grams = defaultdict(lambda: defaultdict(int))
@@ -36,7 +37,7 @@ def make_markov_model(words):
     for word, occ_dict in grams.items():
         total_occ = sum(occ_dict.values())
         freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
-    return ({'word': word for word in starters}, freqs)
+    return ([{'word': word} for word in starters], freqs)
 
 
 def scrape_shakespeare():
@@ -47,6 +48,7 @@ def scrape_shakespeare():
 
     workLinks = []
 
+    print('Gathering URLs to scrape...')
     for a in soup.find_all('a', href=True):
         if 'index' in a['href']:
             link = 'http://shakespeare.mit.edu/' + \
@@ -55,6 +57,7 @@ def scrape_shakespeare():
 
     words = []
     for workURL in workLinks:
+        print('Scraping ' + workURL)
         req = requests.get(workURL)
         soup = BeautifulSoup(req.content, 'html5lib')
         for a in soup.find_all('blockquote'):
@@ -70,3 +73,24 @@ def update_db(db):
     db.freqs.insert_many(freqs)
     db.starters.insert_many(starters)
 
+
+def main():
+    print('Scraping...')
+    words = scrape_shakespeare()
+    print('Done scraping')
+    print('-----------------------')
+    print('Building model...')
+    starters, freqs = make_markov_model(words)
+    print('Done building model')
+    print('-----------------------')
+    print('Writing to files...')
+    with open('starters.json', 'w') as starters_file:
+        json.dump(starters, starters_file)
+    print('Wrote starters.json')
+    with open('freqs.json', 'w') as freqs_file:
+        json.dump(freqs, freqs_file)
+    print('Wrote freqs.json')
+    print('Done')
+
+if __name__ == '__main__':
+    main()
