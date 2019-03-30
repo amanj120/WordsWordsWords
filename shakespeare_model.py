@@ -84,9 +84,11 @@ def main():
     print('Done building model')
     print('-----------------------')
     print('Writing to files...')
+    print('Writing starters.json')
     with open('starters.json', 'w') as starters_file:
         json.dump(starters, starters_file)
     print('Wrote starters.json')
+    print('Writing freqs.json')
     with open('freqs.json', 'w') as freqs_file:
         json.dump(freqs, freqs_file)
     print('Wrote freqs.json')
