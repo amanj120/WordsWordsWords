@@ -1,0 +1,11 @@
+.fancy-font {
+  font-family: "Indie Flower", cursive;
+  font-size: 40pt;
+  margin: 0;
+}
+
+input {
+  font-family: "Verdana", sans-serif;
+  height: 50px;
+  font-size: 25px;
+}
