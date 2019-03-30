@@ -3,6 +3,7 @@ import sys
 
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
+from pymongo import MongoClient
 from nltk.corpus import wordnet
 
 
@@ -44,7 +45,7 @@ def starters():
     return jsonify([word['word'] for word in rand_words])
 
 @app.route('/<other>')
-def handleIllegalRequest(other):
+def handleIllegalRequest(_):
     return "405: Restricted method"
 
 @app.route('/ping')
