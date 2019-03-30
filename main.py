@@ -1,3 +1,5 @@
+import re
+
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
 from nltk.corpus import wordnet
@@ -8,7 +10,7 @@ RANDOM_SIZE = 20
 
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = 'mongodb://server/dbname'
+app.config['MONGO_URI'] = 'mongodb://35.231.223.163:/markov'
 mongo = PyMongo(app)
 
 
@@ -26,7 +28,8 @@ def index():
 
 @app.route('/words/<word>')
 def words(word):
-    word_relation = mongo.db.freqs.find_one({'word': word})
+    word_regex = re.compile(re.escape(word), re.IGNORECASE)
+    word_relation = mongo.db.freqs.find_one({'word': word_regex})
     if not word_relation:
         rand_relations = mongo.db.freqs.aggregate({'$sample': {'size': RANDOM_SIZE}})
         return jsonify([rand_relation['word'] for rand_relation in rand_relations])
