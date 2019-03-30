@@ -1,10 +1,13 @@
 from collections import defaultdict
 import json
+from multiprocessing import Pool
 import re
 
 from bs4 import BeautifulSoup
 import requests
 
+URL = 'http://shakespeare.mit.edu/index.html'
+POOL_SIZE = 10
 
 # \w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*|(?:[.,:;!\'"()\[\]–—]|--)
 word_pattern = \
@@ -39,60 +42,79 @@ def make_markov_model(words):
         freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
     return ([{'word': word} for word in starters], freqs)
 
+def scrapeLink(work_url):
+    words = []
+    print('Scraping ' + work_url)
+    req = requests.get(work_url)
+    soup = BeautifulSoup(req.content, 'html5lib')
+    for a in soup.find_all('blockquote'):
+        text = a.get_text().rstrip()
+        words.extend(word_pattern.findall(text))
+    return words
 
 def scrape_shakespeare():
-    URL = 'http://shakespeare.mit.edu/index.html'
     r = requests.get(URL)
 
     soup = BeautifulSoup(r.content, 'html5lib')
 
-    workLinks = []
+    work_links = []
 
-    print('Gathering URLs to scrape...')
+    print('> Gathering URLs to scrape...')
     for a in soup.find_all('a', href=True):
         if 'index' in a['href']:
             link = 'http://shakespeare.mit.edu/' + \
                 a['href'].replace('/index.html', '/full.html')
-            workLinks.append(link)
+            work_links.append(link)
+    print('> Done gathering URLs')
 
-    words = []
-    for workURL in workLinks:
-        print('Scraping ' + workURL)
-        req = requests.get(workURL)
-        soup = BeautifulSoup(req.content, 'html5lib')
-        for a in soup.find_all('blockquote'):
-            text = a.get_text().rstrip()
-            words.extend(word_pattern.findall(text))
+    pool = Pool(POOL_SIZE)
+    works = pool.map(scrapeLink, work_links)
+    pool.terminate()
+    pool.join()
 
-    return words
+    return [word for words in works for word in words]
 
 
 def update_db(db):
+    print('> Scraping...')
     words = scrape_shakespeare()
+    print('> Done scraping')
+    print('-----------------------')
+    print('> Building model...')
     starters, freqs = make_markov_model(words)
-    db.freqs.insert_many(freqs)
+    print('> Done building model')
+    print('-----------------------')
+    print('> Inserting into database...')
+    print('> Dropping starters collection...')
+    db.starters.drop()
+    print('> Bulk inserting starters...')
     db.starters.insert_many(starters)
+    print('> Dropping freqs collection...')
+    db.freqs.drop()
+    print('> Bulk inserting freqs...')
+    db.freqs.insert_many(freqs)
+    print('> Done')
 
 
 def main():
-    print('Scraping...')
+    print('> Scraping...')
     words = scrape_shakespeare()
-    print('Done scraping')
+    print('> Done scraping')
     print('-----------------------')
-    print('Building model...')
+    print('> Building model...')
     starters, freqs = make_markov_model(words)
-    print('Done building model')
+    print('> Done building model')
     print('-----------------------')
-    print('Writing to files...')
-    print('Writing starters.json')
+    print('> Writing to files...')
+    print('> Writing starters.json')
     with open('starters.json', 'w') as starters_file:
         json.dump(starters, starters_file)
-    print('Wrote starters.json')
-    print('Writing freqs.json')
+    print('> Wrote starters.json')
+    print('> Writing freqs.json')
     with open('freqs.json', 'w') as freqs_file:
         json.dump(freqs, freqs_file)
-    print('Wrote freqs.json')
-    print('Done')
+    print('> Wrote freqs.json')
+    print('> Done')
 
 if __name__ == '__main__':
     main()
