@@ -1,20 +1,19 @@
-from flask import Blueprint, jsonify, request
+from flask import request
 from flask import Flask
-from flask_cors import CORS
-import pymongo
+from flask_pymongo import PyMongo
 
 
 app = Flask(__name__)
+app.config["MONGO_URI"] = "TODO"
+mongo = PyMongo(app)
 
-CORS(app)
 
 if __name__ == '__main__':
     app.run()
+
 
 @app.route("/ping", methods=['GET'])
 def ping():
     if request.method == 'GET':
         return "ping"
-    else:
-        return "405: Restricted method"
-
+    return "405: Restricted method"
