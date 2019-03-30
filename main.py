@@ -1,9 +1,7 @@
 import re
-import sys
 
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
-from pymongo import MongoClient
 from nltk.corpus import wordnet
 
 
@@ -32,20 +30,28 @@ def index():
 def words(word):
     word_regex = re.compile(re.escape(word), re.IGNORECASE)
     word_relation = mongo.db.freqs.find_one({'word': word_regex})
+
     if not word_relation:
+        # Sample random documents from database
         rand_relations = mongo.db.freqs.aggregate([{'$sample': {'size': RANDOM_SIZE}}])
-        return jsonify([rand_relation['word'] for rand_relation in rand_relations])
+        # Extract the 'word' property from each of the documents
+        word_list = [rand_relation['word'] for rand_relation in rand_relations]
+        return jsonify(word_list)
+
+    # Extract the list of words and frequencies from this word's relations
     freq_pairs = word_relation['freqs']
+    # Sort in descending order of frequency
     freq_pairs.sort(key=lambda f: -f['freq'])
-    return jsonify([freq_pair['word'] for freq_pair in freq_pairs])
+    # Extract the 'word' property from each of the records
+    word_list = [freq_pair['word'] for freq_pair in freq_pairs]
+    return jsonify(word_list)
 
 @app.route('/starters')
 def starters():
     rand_words = mongo.db.starters.aggregate([{'$sample': {'size': 20}}])
-    print([w for w in rand_words])
-    for word in rand_words:
-        print(word)
-    return jsonify([word['word'] for word in rand_words])
+    # Extract 'word' property of each of the queried documents
+    word_list = [word['word'] for word in rand_words]
+    return jsonify(word_list)
 
 @app.route('/<other>')
 def handleIllegalRequest(_):
@@ -56,10 +62,3 @@ def ping():
     return mongo.db.name
 
 
-if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == '--update-db':
-        from shakespeare_model import update_db
-        admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
-        update_db(admin_client.get_database())
-    else:
-        app.run()
