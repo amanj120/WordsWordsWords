@@ -1,1 +1,0 @@
-mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/test?retryWrites=true
