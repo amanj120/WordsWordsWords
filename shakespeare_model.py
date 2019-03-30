@@ -11,8 +11,8 @@ POOL_SIZE = 10
 
 # \w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*|(?:[.,:;!\'"()\[\]–—]|--)
 word_pattern = \
-    re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*|(?:[.,:;!?–—]|-{2,})')
-end_word_pattern = re.compile(r'[.,:;!?–—]|-{2,}')
+    re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*(?:[.,:;!?–—]|-{2,})?')
+end_word_pattern = re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*(?:[.,:;!?–—]|-{2,})+')
 
 
 def is_end_word(word):
