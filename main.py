@@ -1,8 +1,11 @@
 import re
+import sys
 
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
 from nltk.corpus import wordnet
+
+from shakespeare_model import update_db
 
 
 STARTER_SIZE = 20
@@ -10,7 +13,7 @@ RANDOM_SIZE = 20
 
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = 'mongodb://35.231.223.163:/markov'
+app.config['MONGO_URI'] = 'mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/test?retryWrites=true'
 mongo = PyMongo(app)
 
 
@@ -51,4 +54,7 @@ def ping():
     return 'ping'
 
 if __name__ == '__main__':
-    app.run()
+    if len(sys.argv) > 1 and sys.argv[1] == '--update-db':
+        update_db(mongo.db)
+    else:
+        app.run()

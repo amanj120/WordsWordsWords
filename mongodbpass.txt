@@ -1,4 +1,1 @@
-aaWyedsDgy03jcLc
-mongodb+srv://admin:<password>@cluster0-kwnae.gcp.mongodb.net/test?retryWrites=true
-
 mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/test?retryWrites=true
