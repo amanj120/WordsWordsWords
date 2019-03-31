@@ -5,7 +5,7 @@ from flask import Flask, jsonify
 
 
 STARTER_SIZE = 10
-RANDOM_SIZE = 10
+RANDOM_SIZE = 100
 # MONGO_URI = 'mongodb+srv://words_app:vQy9e9PUZA6ZWPMm@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true'
 
 
@@ -16,10 +16,10 @@ app = Flask(__name__)
 
 
 with open('starters.json', 'r') as starters_file:
-    starter_list = json.load(starters_file)
+    starter_list = set(json.load(starters_file))
 with open('freqs.json', 'r') as freqs_file:
     freqs = json.load(freqs_file)
-word_list = freqs.keys()
+word_list = set(freqs.keys())
 
 
 @app.route('/')
@@ -36,7 +36,7 @@ def words(word):
     # Limit number of pairs taken
     freq_pairs = freq_pairs[:RANDOM_SIZE]
     # Pad pairs with random sample
-    num_left = RANDOM_SIZE - len(freq_pairs)
+    num_left = max(0, RANDOM_SIZE - len(freq_pairs))
     rand_words = random.sample(word_list, num_left)
     freq_pairs.extend([{'word': word, 'freq': 0.0} for word in rand_words])
     return jsonify(freq_pairs)
