@@ -10,6 +10,8 @@ from pymongo import MongoClient
 
 
 BASE_URL = 'http://shakespeare.mit.edu/index.html'
+MONGO_ADMIN_URI = 'mongodb://root:cVwgXTPkwR5v@35.196.19.245:27017/?replicaSet=replicaset'
+# 10.142.0.3
 POOL_SIZE = 10
 
 # \w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*|(?:[.,:;!\'"()\[\]–—]|--)
@@ -130,8 +132,8 @@ if __name__ == '__main__':
             commands = ['help', 'sample-data', 'write-files', 'update-db']
             print('Possible commands:\n' + '\n'.join(['    --' + command for command in commands]))
         elif arg == '--sample-data':
-            admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
-            db = admin_client.get_database()
+            admin_client = MongoClient(MONGO_ADMIN_URI)
+            db = admin_client.markov
             rand_starters = db.starters.aggregate([{'$sample': {'size': 20}}])
             rand_freqs = db.freqs.aggregate([{'$sample': {'size': 5}}])
             print('starters\n--------------------')
@@ -139,8 +141,8 @@ if __name__ == '__main__':
             print('\nfreqs\n--------------------')
             print(list(rand_freqs))
         elif arg == '--update-db':
-            admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
-            update_db(admin_client.get_database())
+            admin_client = MongoClient(MONGO_ADMIN_URI)
+            update_db(admin_client.markov)
         elif arg == '--write-files':
             write_files()
         else:
