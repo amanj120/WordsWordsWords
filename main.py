@@ -1,19 +1,18 @@
 import re
 
 from flask import Flask, jsonify
-from pymongo import MongoClient
+from flask_pymongo import PyMongo
 from nltk.corpus import wordnet
 
 
-STARTER_SIZE = 20
-RANDOM_SIZE = 20
+STARTER_SIZE = 10
+RANDOM_SIZE = 10
 MONGO_URI = 'mongodb+srv://words_app:vQy9e9PUZA6ZWPMm@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true'
 
 
 app = Flask(__name__)
-# app.config['MONGO_URI'] = MONGO_URI
-# mongo = PyMongo(app)
-db = MongoClient(MONGO_URI).get_database()
+app.config['MONGO_URI'] = MONGO_URI
+mongo = PyMongo(app)
 
 
 def synonyms(word):
@@ -31,28 +30,35 @@ def index():
 @app.route('/words/<word>')
 def words(word):
     word_regex = re.compile(re.escape(word), re.IGNORECASE)
-    word_relation = db.freqs.find_one({'word': word_regex})
+    word_relation = mongo.db.freqs.find_one({'word': word_regex})
 
     if not word_relation:
         # Sample random documents from database
-        rand_relations = db.freqs.aggregate([{'$sample': {'size': RANDOM_SIZE}}])
+        rand_relations = mongo.db.freqs.aggregate([{'$sample': {'size': RANDOM_SIZE}}])
         # Extract the 'word' property from each of the documents
-        word_list = [rand_relation['word'] for rand_relation in rand_relations]
-        freq = 1 / len(word_list)
-        return jsonify([{'word': word, 'freq': freq} for word in word_list])
+        rand_words = [rand_relation['word'] for rand_relation in rand_relations]
+        freq = 1 / len(rand_words)
+        return jsonify([{'word': word, 'freq': freq} for word in rand_words])
 
     # Extract the list of words and frequencies from this word's relations
     freq_pairs = word_relation['freqs']
     # Sort in descending order of frequency
     freq_pairs.sort(key=lambda f: -f['freq'])
+    # Limit number of pairs taken
+    freq_pairs = freq_pairs[:RANDOM_SIZE]
+    # Pad pairs with random sample
+    num_left = RANDOM_SIZE - freq_pairs
+    rand_relations = mongo.db.freqs.aggregate([{'$sample': {'size': num_left}}])
+    rand_words = [rand_relation['word'] for rand_relation in rand_relations]
+    freq_pairs.extend([{'word': word, 'freq': 0.0} for word in rand_words])
     return jsonify(freq_pairs)
 
 @app.route('/starters')
 def starters():
-    rand_words = db.starters.aggregate([{'$sample': {'size': 20}}])
+    rand_words = mongo.db.starters.aggregate([{'$sample': {'size': 20}}])
     # Extract 'word' property of each of the queried documents
-    word_list = [word['word'] for word in rand_words]
-    return jsonify(word_list)
+    rand_words = [word['word'] for word in rand_words]
+    return jsonify(rand_words)
 
 @app.route('/<other>')
 def handleIllegalRequest(_):
@@ -60,4 +66,4 @@ def handleIllegalRequest(_):
 
 @app.route('/ping')
 def ping():
-    return "on database: " + db.name
+    return "on database: " + mongo.db.name
