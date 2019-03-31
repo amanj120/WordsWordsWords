@@ -5,12 +5,15 @@ import os
 import sys
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 STARTER_SIZE = 10
 WORDS_SIZE = 100
 PAD_SIZE = 10
 
 app = Flask(__name__)
+
+CORS(app)
 
 path = sys.path[0]
 
