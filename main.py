@@ -26,7 +26,7 @@ def index():
 
 @app.route('/words/<word>')
 def words(word):
-    if word != 'I':
+    if word not in ['I', 'I\'m', 'I\'ll', 'I\'ve', 'I\'d']:
         word = word.lower()
     freq_pairs = freqs.get(word, [])
     # Sort in descending order of frequency
