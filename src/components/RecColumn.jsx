@@ -48,7 +48,7 @@ class RecColumn extends Component {
           >
             <p>{item.word + " | " + (item.freq * 100).toFixed(2) + "%"}</p>
           </div>
-          <br />
+          <br/>
         </Fragment>
       );
     });
@@ -63,17 +63,20 @@ class RecColumn extends Component {
           <tbody>
             <tr>
               <td>
-                <button onClick={() => this.props.handleBackPress()}>
+                <button onClick={() => this.props.handleBackPress()} className="navButton bigFont">
                   Back
                 </button>
               </td>
-              <td>{this.renderWordColumn()}</td>
+            </tr>
+            <tr>
               <td>
-                <button onClick={() => this.props.handleForwardPress()}>
+                <button onClick={() => this.props.handleForwardPress()} className="navButton bigFont">
                   Forward
                 </button>
               </td>
             </tr>
+            <tr><td><p></p></td></tr>
+            <tr><td>{this.renderWordColumn()}</td></tr>
           </tbody>
         </table>
       </Fragment>

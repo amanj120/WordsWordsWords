@@ -278,20 +278,12 @@ class Recommender extends Component {
                       value={this.state.textContent}
                     />
                   </td>
-                  <td>
-                    <div
-                      onClick={this.handleSubmitPress}
-                      className="wordSubmitBtn fancyFont medFont centerText"
-                    >
-                      Submit
-                    </div>
-                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <h3>Recommended Words</h3>
-          <h3>{"Selecting Word: " + (this.state.viewIndex + 1).toString()}</h3>
+          <h3 className="fancyFont">Enter new word above</h3>
+          <p></p>
           {this.renderWordColumns()}
         </center>
       </React.Fragment>

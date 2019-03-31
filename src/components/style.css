@@ -11,6 +11,32 @@
   font-size: 25px;
 }
 
+.navButton {
+  font-family: "Germania One", cursive;
+  background-color: #f5c019;
+  border-radius: 10px;
+  font-size: 20pt;
+  border: none;
+  outline:none;
+  height: 60px;
+  width: 250px;
+  margin: 0 auto;
+}
+
+button:hover {
+    background-color: #ffd12a;
+}
+
+.wordBox {
+  font-family: "Germania One", cursive;
+  background-color: #e0d9d9;
+  font-size: 20pt;
+  height: 60px;
+  width: 250;
+  border-radius: 10px;
+  margin: 0 auto;
+}
+
 .wordSubmitBtn {
   height: 50px;
   background-color: #e6ac00;
@@ -34,16 +60,7 @@ input {
   justify-content: center;
 }
 
-.wordBox {
-  font-family: "Germania One", cursive;
-  background-color: #e0d9d9;
-  border-radius: 25px;
-  font-size: 20pt;
-  height: 60px;
-  width: 250px;
-  border-radius: 5px;
-  margin: 0 auto;
-}
+
 
 .wordBox:hover {
   background-color: #cccccc;
