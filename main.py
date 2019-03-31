@@ -30,9 +30,9 @@ def words(word):
 
     # Extract the list of words and frequencies from this word's relations
     freq_pairs = word_relation['freqs']
+    random.shuffle(freq_pairs)
     # Limit number of pairs taken
     freq_pairs = freq_pairs[:WORDS_SIZE]
-    random.shuffle(freq_pairs)
     # Sort in descending order of frequency
     freq_pairs.sort(key=lambda f: -f['freq'])
     # Pad pairs with random sample
