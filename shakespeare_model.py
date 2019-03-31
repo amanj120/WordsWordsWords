@@ -16,7 +16,7 @@ POOL_SIZE = 10
 word_pattern = \
     re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*(?:\s*[.,:;!?–—]|-+)?')
 end_word_pattern = \
-    re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*(?:\s*[.,:;!?–—]|-+)+')
+    re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*(?:\s*[.!?])+')
 
 
 def load_presets():
