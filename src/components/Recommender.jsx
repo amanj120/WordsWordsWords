@@ -7,7 +7,7 @@ class Recommender extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      latestCol: 0,
+      latestColIndex: 0,
       recentWord: null,
       columnData: []
     };
@@ -39,7 +39,8 @@ class Recommender extends Component {
         <div style={{ float: "left", marginRight: 5 }} key={index}>
           <RecColumn
             providedWords={item}
-            handleAddColumn={chosenWordObj => this.addWordColumn(chosenWordObj)}
+            handleAddColumn={(chosenWordObj, ind) => this.addWordColumn(chosenWordObj, ind)}
+            colIndex={index}
           />
         </div>
       );
@@ -48,9 +49,12 @@ class Recommender extends Component {
     return cols;
   };
 
-  addWordColumn = chosenWordObj => {
+  addWordColumn = (chosenWordObj, ind) => {
+    if (ind != this.state.latestColIndex) return;
+
     this.setState({
-      recentWord: chosenWordObj.word
+      recentWord: chosenWordObj.word,
+      latestColIndex: this.state.latestColIndex + 1
     });
 
     // CHANGE THIS
@@ -65,7 +69,6 @@ class Recommender extends Component {
   render() {
     return (
       <React.Fragment>
-        <h1>{"HI: " + this.state.recentWord}</h1>
         <h1>Recommended Words:</h1>
         {this.renderWordColumns()}
       </React.Fragment>

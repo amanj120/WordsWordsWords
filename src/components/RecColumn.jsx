@@ -3,7 +3,10 @@ import React, { Component, Fragment } from "react";
 class RecColumn extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      selectedIndex: null,
+      wordBoxStyle: ""
+    };
   }
 
   componentDidMount() {
@@ -12,10 +15,24 @@ class RecColumn extends Component {
 
   handleWordClick = index => {
     let chosenWordObj = this.props.providedWords[index];
-    this.props.handleAddColumn(chosenWordObj);
+    this.props.handleAddColumn(chosenWordObj, this.props.colIndex);
+    this.changeStyling(index);
   };
 
-  returnWordColumn() {
+  changeStyling = index => {
+    this.setState({
+      wordBoxStyle: "wordBoxSelect",
+      selectedIndex: index
+    });
+  };
+
+  returnStyling = index => {
+    if (index === this.state.selectedIndex)
+      return "wordBox " + this.state.wordBoxStyle;
+    else return "wordBox";
+  };
+
+  renderWordColumn() {
     if (this.props.providedWords == undefined) return;
 
     let wordBoxes = [];
@@ -23,8 +40,11 @@ class RecColumn extends Component {
     this.props.providedWords.map((item, i) => {
       wordBoxes.push(
         <Fragment key={i}>
-          <div onClick={() => this.handleWordClick(i)} className="wordBox">
-            {item.word}
+          <div
+            onClick={() => this.handleWordClick(i)}
+            className={this.returnStyling(i)}
+          >
+            {item.word + " | " + item.freq}
           </div>
           <br />
         </Fragment>
@@ -35,7 +55,7 @@ class RecColumn extends Component {
   }
 
   render() {
-    return <Fragment>{this.returnWordColumn()}</Fragment>;
+    return <Fragment>{this.renderWordColumn()}</Fragment>;
   }
 }
 

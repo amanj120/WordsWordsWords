@@ -45,7 +45,7 @@ class App extends Component {
           <h1 className="fancy-font">Words Words Words</h1>
         </center>
         <hr />
-        <p>Start typing a sentence</p>
+        <p>Type a word</p>
         <input type="text" onChange={this.updateInputValue} />
         <Recommender lastWord={this.state.lastWord} />
       </React.Fragment>
