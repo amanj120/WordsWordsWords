@@ -1,27 +1,54 @@
-.fancy-font {
-  font-family: 'Germania One', cursive;
-  font-size: 40pt;
+.fancyFont {
+  font-family: "Germania One", cursive;
   margin: 0;
+}
+
+.bigFont {
+  font-size: 40px;
+}
+
+.medFont {
+  font-size: 25px;
+}
+
+.wordSubmitBtn {
+  height: 50px;
+  background-color: #e6ac00;
+  width: 100px;
+}
+
+.wordSubmitBtn:hover {
+  background-color: #f5c019;
 }
 
 input {
   font-family: "Verdana", sans-serif;
   height: 50px;
   font-size: 25px;
+  float: left;
+}
+
+.centerText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .wordBox {
-  background-color: #999999;
+  font-family: "Germania One", cursive;
+  background-color: #e0d9d9;
+  border-radius: 25px;
   font-size: 20pt;
-  width: 200px;
-  height: 50px;
-  
+  height: 60px;
+  width: 250px;
+  border-radius: 5px;
+  margin: 0 auto;
 }
 
 .wordBox:hover {
-  background-color: #CCCCCC;
+  background-color: #cccccc;
 }
 
 .wordBoxSelect {
-  background-color: yellow;
+  background-color: #f5c019;
 }

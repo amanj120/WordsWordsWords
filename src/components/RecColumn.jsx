@@ -4,8 +4,7 @@ class RecColumn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedIndex: null,
-      wordBoxStyle: ""
+      wordBoxStyle: "wordBox"
     };
   }
 
@@ -15,22 +14,24 @@ class RecColumn extends Component {
 
   handleWordClick = index => {
     let chosenWordObj = this.props.providedWords[index];
-    this.props.handleAddColumn(chosenWordObj, this.props.colIndex);
-    this.changeStyling(index);
+    this.props.handleAddColumn(chosenWordObj, this.props.colIndex, index, false);
   };
 
-  changeStyling = index => {
-    this.setState({
-      wordBoxStyle: "wordBoxSelect",
-      selectedIndex: index
-    });
-  };
+  returnStyling(wordInd) {
+    console.log(
+      "View, Col, Latest, selectedIndex: " +
+        this.props.colIndex +
+        this.props.latestIndex +
+        this.props.selectedIndex
+    );
+    if (
+      wordInd === this.props.selectedIndex &&
+      this.props.colIndex < this.props.latestIndex
+    )
+      return "wordBoxSelect";
 
-  returnStyling = index => {
-    if (index === this.state.selectedIndex)
-      return "wordBox " + this.state.wordBoxStyle;
-    else return "wordBox";
-  };
+    return;
+  }
 
   renderWordColumn() {
     if (this.props.providedWords == undefined) return;
@@ -38,13 +39,14 @@ class RecColumn extends Component {
     let wordBoxes = [];
 
     this.props.providedWords.map((item, i) => {
+      let styling = this.returnStyling(i);
       wordBoxes.push(
         <Fragment key={i}>
           <div
             onClick={() => this.handleWordClick(i)}
-            className={this.returnStyling(i)}
+            className={"wordBox centerText " + styling}
           >
-            {item.word + " | " + item.freq}
+            <p>{item.word + " | " + (item.freq * 100).toFixed(2) + "%"}</p>
           </div>
           <br />
         </Fragment>
@@ -55,7 +57,27 @@ class RecColumn extends Component {
   }
 
   render() {
-    return <Fragment>{this.renderWordColumn()}</Fragment>;
+    return (
+      <Fragment>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <button onClick={() => this.props.handleBackPress()}>
+                  Back
+                </button>
+              </td>
+              <td>{this.renderWordColumn()}</td>
+              <td>
+                <button onClick={() => this.props.handleForwardPress()}>
+                  Forward
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </Fragment>
+    );
   }
 }
 

@@ -15,13 +15,16 @@
   ],
   "starters": [
     {
-      "word": "start_word1"
+      "word": "start_word1",
+      "freq": 0.14
     },
     {
-      "word": "start_word2"
+      "word": "start_word2",
+      "freq": 0.14
     },
     {
-      "word": "start_word3"
+      "word": "start_word3",
+      "freq": 0.14
     }
   ]
 }
