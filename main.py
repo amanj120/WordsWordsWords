@@ -10,9 +10,9 @@ PAD_SIZE = 10
 
 app = Flask(__name__)
 
-with open('starters.json', 'r') as starters_file:
+with open('./starters.json', 'r') as starters_file:
     starter_list = set(json.load(starters_file))
-with open('freqs.json', 'r') as freqs_file:
+with open('./freqs.json', 'r') as freqs_file:
     freqs = json.load(freqs_file)
 word_list = set(freqs.keys())
 
