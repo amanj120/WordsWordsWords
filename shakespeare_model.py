@@ -35,7 +35,7 @@ def is_end_word(word):
     return end_word_pattern.fullmatch(word)
 
 
-def make_markov_model(words, presets):
+def make_markov_model(words):
     if not words:
         return {}
     words = [word.lower() for word in words]
@@ -52,14 +52,9 @@ def make_markov_model(words, presets):
     for i in range(len(words) - 1):
         grams[words[i]][(words[i + 1])] += 1
     freqs = []
-    # freqs = presets
-    for word, word_freqs in presets.items():
-        freqs.append({'word': word, 'freqs': word_freqs})
-    # freqs = presets
     for word, occ_dict in grams.items():
         total_occ = sum(occ_dict.values())
         freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
-        # freqs[word] = [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]
     return [{'word': word} for word in starters], freqs
 
 
@@ -98,13 +93,13 @@ def scrape_shakespeare():
 
 
 def update_db(db):
-    presets = load_presets()
+    # presets = load_presets()
     print('> Scraping...')
     words = scrape_shakespeare()
     print('> Done scraping')
     print('-----------------------')
     print('> Building model...')
-    starters, freqs = make_markov_model(words, presets)
+    starters, freqs = make_markov_model(words)
     print('> Done building model')
     print('-----------------------')
     print('> Inserting into database...')
@@ -120,13 +115,13 @@ def update_db(db):
 
 
 def write_files():
-    presets = load_presets()
+    # presets = load_presets()
     print('> Scraping...')
     words = scrape_shakespeare()
     print('> Done scraping')
     print('-----------------------')
     print('> Building model...')
-    starters, freqs = make_markov_model(words, presets)
+    starters, freqs = make_markov_model(words)
     print('> Done building model')
     print('-----------------------')
     print('> Writing to files...')
