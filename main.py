@@ -3,15 +3,11 @@ import random
 
 from flask import Flask, jsonify
 
-
-
 STARTER_SIZE = 10
 WORDS_SIZE = 100
 PAD_SIZE = 10
 
-
 app = Flask(__name__)
-
 
 with open('starters.json', 'r') as starters_file:
     starter_list = set(json.load(starters_file))
@@ -53,7 +49,6 @@ def ping():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-
 
 '''
 def synonyms(word):
