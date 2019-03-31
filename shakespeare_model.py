@@ -24,7 +24,7 @@ def is_end_word(word):
 def make_markov_model(words):
     if not words:
         return {}
-    words = [word.lower() for word in words if word not in ['I', 'I\'m', 'I\'ll', 'I\'ve', 'I\'d']]
+    words = [word.lower() for word in words]
     starters = set()
     # {'a': {'b': 1, 'd': 2}}
     grams = defaultdict(lambda: defaultdict(int))
