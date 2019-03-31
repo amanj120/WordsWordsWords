@@ -42,11 +42,14 @@ def make_markov_model(words):
     for i in range(len(words) - 1):
         grams[words[i]][(words[i + 1])] += 1
     # {'word': 'a', 'freqs': [{'word': 'b', 'freq': 0.333}, {'word': 'd', 'freq': 0.666}]}
-    freqs = []
+    # freqs = []
+    freqs = {}
     for word, occ_dict in grams.items():
         total_occ = sum(occ_dict.values())
-        freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
-    return ([{'word': word} for word in starters], freqs)
+        # freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
+        freqs[word] = [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]
+    # return ([{'word': word} for word in starters], freqs)
+    return list(starters), freqs
 
 
 def scrapeLink(work_url):
