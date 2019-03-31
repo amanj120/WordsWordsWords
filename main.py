@@ -5,7 +5,8 @@ from flask import Flask, jsonify
 
 
 STARTER_SIZE = 10
-RANDOM_SIZE = 100
+WORDS_SIZE = 100
+PAD_SIZE = 10
 
 
 app = Flask(__name__)
@@ -30,9 +31,9 @@ def words(word):
     # Sort in descending order of frequency
     freq_pairs.sort(key=lambda f: -f['freq'])
     # Limit number of pairs taken
-    freq_pairs = freq_pairs[:RANDOM_SIZE]
+    freq_pairs = freq_pairs[:WORDS_SIZE]
     # Pad pairs with random sample
-    num_left = max(0, RANDOM_SIZE - len(freq_pairs))
+    num_left = max(0, PAD_SIZE - len(freq_pairs))
     rand_words = random.sample(word_list, num_left)
     freq_pairs.extend([{'word': word, 'freq': 0.0} for word in rand_words])
     return jsonify(freq_pairs)
