@@ -29,7 +29,7 @@ def words(word):
     word = word.lower()
     freq_pairs = freqs.get(word, [])
     # Sort in descending order of frequency
-    freq_pairs.sort(key=lambda f: -f['freq'])
+    # freq_pairs.sort(key=lambda f: -f['freq'])
     # Limit number of pairs taken
     freq_pairs = freq_pairs[:WORDS_SIZE]
     # Pad pairs with random sample
