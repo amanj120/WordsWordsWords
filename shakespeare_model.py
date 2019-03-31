@@ -2,6 +2,7 @@ from collections import defaultdict
 import json
 from multiprocessing import Pool
 import re
+import os
 import sys
 
 from bs4 import BeautifulSoup
@@ -17,11 +18,23 @@ end_word_pattern = \
     re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*(?:\s*[.,:;!?–—]|-+)+')
 
 
+def load_presets():
+    presets = {}
+    try:
+        print('> Loading presets...')
+        with open(os.path.join(sys.path[0], 'presets.json'), 'r') as presets_file:
+            presets = json.load(presets_file)
+        print('> Done loading presets')
+    except FileNotFoundError:
+        print('> Error reading presets.json')
+    return presets
+
+
 def is_end_word(word):
     return end_word_pattern.fullmatch(word)
 
 
-def make_markov_model(words):
+def make_markov_model(words, presets):
     if not words:
         return {}
     words = [word.lower() for word in words]
@@ -37,7 +50,7 @@ def make_markov_model(words):
             last_was_end = False
     for i in range(len(words) - 1):
         grams[words[i]][(words[i + 1])] += 1
-    freqs = {}
+    freqs = presets
     for word, occ_dict in grams.items():
         total_occ = sum(occ_dict.values())
         freqs[word] = [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]
@@ -79,12 +92,13 @@ def scrape_shakespeare():
 
 
 def update_db(db):
+    presets = load_presets()
     print('> Scraping...')
     words = scrape_shakespeare()
     print('> Done scraping')
     print('-----------------------')
     print('> Building model...')
-    starters, freqs = make_markov_model(words)
+    starters, freqs = make_markov_model(words, presets)
     print('> Done building model')
     print('-----------------------')
     print('> Inserting into database...')
@@ -100,12 +114,13 @@ def update_db(db):
 
 
 def write_files():
+    presets = load_presets()
     print('> Scraping...')
     words = scrape_shakespeare()
     print('> Done scraping')
     print('-----------------------')
     print('> Building model...')
-    starters, freqs = make_markov_model(words)
+    starters, freqs = make_markov_model(words, presets)
     print('> Done building model')
     print('-----------------------')
     print('> Writing to files...')
