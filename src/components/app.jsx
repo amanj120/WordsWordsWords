@@ -47,7 +47,6 @@ class App extends Component {
         <hr />
         <p>Start typing a sentence</p>
         <input type="text" onChange={this.updateInputValue} />
-        <h1>{this.getWordCount()}</h1>
         <Recommender lastWord={this.state.lastWord} />
       </React.Fragment>
     );
