@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import json
 import random
+import os
+import sys
 
 from flask import Flask, jsonify
 
@@ -10,9 +12,11 @@ PAD_SIZE = 10
 
 app = Flask(__name__)
 
-with open('./starters.json', 'r') as starters_file:
+path = sys.path[0]
+
+with open(os.path.join(path, 'starters.json'), 'r') as starters_file:
     starter_list = set(json.load(starters_file))
-with open('./freqs.json', 'r') as freqs_file:
+with open(os.path.join(path, 'freqs.json'), 'r') as freqs_file:
     freqs = json.load(freqs_file)
 word_list = set(freqs.keys())
 
