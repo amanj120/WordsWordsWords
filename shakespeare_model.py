@@ -126,9 +126,8 @@ def write_files():
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         arg = sys.argv[1]
-        if arg == '--update-db':
-            admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
-            update_db(admin_client.get_database())
+        if arg == '--help':
+            print('Possible commands:\n    --update-db\n    --sample-data')
         elif arg == '--sample-data':
             admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
             db = admin_client.get_database()
@@ -138,7 +137,10 @@ if __name__ == '__main__':
             print(list(rand_starters))
             print('\nfreqs\n--------------------')
             print(list(rand_freqs))
-        elif arg == '--help':
-            print('Possible commands:\n    --update-db\n    --sample-data')
+        elif arg == '--update-db':
+            admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
+            update_db(admin_client.get_database())
+        elif arg == '--write-files':
+            write_files()
         else:
             raise Exception('Invalid flag: ' + sys.argv[1])
