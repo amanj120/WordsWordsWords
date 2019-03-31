@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import requests
 from pymongo import MongoClient
 
+
 BASE_URL = 'http://shakespeare.mit.edu/index.html'
 POOL_SIZE = 10
 
@@ -45,6 +46,7 @@ def make_markov_model(words):
         freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
     return ([{'word': word} for word in starters], freqs)
 
+
 def scrapeLink(work_url):
     words = []
     print('Scraping ' + work_url)
@@ -54,6 +56,7 @@ def scrapeLink(work_url):
         text = a.get_text().rstrip()
         words.extend(word_pattern.findall(text))
     return words
+
 
 def scrape_shakespeare():
     r = requests.get(BASE_URL)
