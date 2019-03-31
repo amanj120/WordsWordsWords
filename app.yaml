@@ -1,0 +1,16 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /.*
+  script: main.app
+
+libraries:
+- name: flask
+  version: 0.12
+
+resources:
+  cpu: 4
+  memory_gb: 2
+  disk_size_gb: 10
