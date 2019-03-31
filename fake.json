@@ -1,16 +1,30 @@
 {
-  "next": [
+  "words": [
     {
-      "data": "word1",
+      "word": "word1",
       "freq": 0.24
     },
     {
-      "data": "word2",
+      "word": "word2",
       "freq": 0.17
     },
     {
-      "data": "word2",
+      "word": "word3",
       "freq": 0.14
     }
+  ],
+  "starters": [
+    {
+        "word": "start_word1",
+        "freq": 0.24
+      },
+      {
+        "word": "start_word2",
+        "freq": 0.17
+      },
+      {
+        "word": "start_word3",
+        "freq": 0.14
+      } 
   ]
 }
