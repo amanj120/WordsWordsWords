@@ -1,3 +1,7 @@
+<<<<<<< HEAD:prod/requirements.txt
 nltk==3.3
+=======
+flask==1.0.2
+>>>>>>> ce3f30e3ea260a0086fc2452506a83a90c765b5f:requirements.txt
 pymongo>=2.1
 
