@@ -38,15 +38,14 @@ def words(word):
         rand_relations = db.freqs.aggregate([{'$sample': {'size': RANDOM_SIZE}}])
         # Extract the 'word' property from each of the documents
         word_list = [rand_relation['word'] for rand_relation in rand_relations]
-        return jsonify(word_list)
+        freq = 1 / len(word_list)
+        return jsonify([{'word': word, 'freq': freq} for word in word_list])
 
     # Extract the list of words and frequencies from this word's relations
     freq_pairs = word_relation['freqs']
     # Sort in descending order of frequency
     freq_pairs.sort(key=lambda f: -f['freq'])
-    # Extract the 'word' property from each of the records
-    word_list = [freq_pair['word'] for freq_pair in freq_pairs]
-    return jsonify(word_list)
+    return jsonify(freq_pairs)
 
 @app.route('/starters')
 def starters():

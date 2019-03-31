@@ -135,9 +135,9 @@ if __name__ == '__main__':
             rand_starters = db.starters.aggregate([{'$sample': {'size': 20}}])
             rand_freqs = db.freqs.aggregate([{'$sample': {'size': 5}}])
             print('starters\n--------------------')
-            print([word['word'] for word in rand_starters])
+            print(list(rand_starters))
             print('\nfreqs\n--------------------')
-            print([{'word': rel['word'], 'freqs': rel['freqs']} for rel in rand_freqs])
+            print(list(rand_freqs))
         elif arg == '--help':
             print('Possible commands:\n    --update-db\n    --sample-data')
         else:
