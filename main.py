@@ -28,10 +28,11 @@ def index():
 def words(word):
     word = word.lower()
     freq_pairs = freqs.get(word, [])
-    # Sort in descending order of frequency
-    # freq_pairs.sort(key=lambda f: -f['freq'])
     # Limit number of pairs taken
     freq_pairs = freq_pairs[:WORDS_SIZE]
+    random.shuffle(freq_pairs)
+    # Sort in descending order of frequency
+    freq_pairs.sort(key=lambda f: -f['freq'])
     # Pad pairs with random sample
     num_left = max(0, PAD_SIZE - len(freq_pairs))
     rand_words = random.sample(word_list, num_left)
