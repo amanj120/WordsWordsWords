@@ -49,7 +49,10 @@ def handleIllegalRequest(other):
 
 @app.route('/ping')
 def ping():
-    return 'ping'
+    return 'pong'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
 
 
 '''
