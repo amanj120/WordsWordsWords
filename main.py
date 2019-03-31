@@ -1,21 +1,21 @@
 import re
 
 from flask import Flask, jsonify
-from pymongo import MongoClient
-from nltk.corpus import wordnet
+#from nltk.corpus import wordnet
 
 
 STARTER_SIZE = 20
 RANDOM_SIZE = 20
-MONGO_URI = 'mongodb+srv://words_app:vQy9e9PUZA6ZWPMm@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true'
+# MONGO_URI = 'mongodb+srv://words_app:vQy9e9PUZA6ZWPMm@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true'
+MONGO_URI = 'mongodb://admin:aaWyedsDgy03jcLc@cluster0-shard-00-00-kwnae.gcp.mongodb.net:27017,cluster0-shard-00-01-kwnae.gcp.mongodb.net:27017,cluster0-shard-00-02-kwnae.gcp.mongodb.net:27017/?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true'
 
 
 app = Flask(__name__)
 # app.config['MONGO_URI'] = MONGO_URI
 # mongo = PyMongo(app)
-db = MongoClient(MONGO_URI).get_database()
+db = MongoClient(MONGO_URI).markov
 
-
+'''
 def synonyms(word):
     syn_sets = wordnet.synsets(word)
     synonyms = set()
@@ -23,6 +23,7 @@ def synonyms(word):
         for lemma in syn_set.lemmas():
             synonyms.add(lemma.name())
     return synonyms
+'''
 
 @app.route('/')
 def index():
@@ -56,7 +57,7 @@ def starters():
     return jsonify(word_list)
 
 @app.route('/<other>')
-def handleIllegalRequest(_):
+def handleIllegalRequest(other):
     return "405: Restricted method"
 
 @app.route('/ping')
