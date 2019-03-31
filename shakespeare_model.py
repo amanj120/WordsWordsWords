@@ -127,7 +127,8 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         arg = sys.argv[1]
         if arg == '--help':
-            print('Possible commands:\n    --update-db\n    --sample-data')
+            commands = ['help', 'sample-data', 'write-files', 'update-db']
+            print('Possible commands:\n' + '\n'.join(['    --' + command for command in commands]))
         elif arg == '--sample-data':
             admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
             db = admin_client.get_database()
