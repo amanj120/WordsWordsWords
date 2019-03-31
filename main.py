@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import random
 import re
 
 from flask import Flask, jsonify
@@ -31,6 +32,7 @@ def words(word):
     freq_pairs = word_relation['freqs']
     # Limit number of pairs taken
     freq_pairs = freq_pairs[:WORDS_SIZE]
+    random.shuffle(freq_pairs)
     # Sort in descending order of frequency
     freq_pairs.sort(key=lambda f: -f['freq'])
     # Pad pairs with random sample
