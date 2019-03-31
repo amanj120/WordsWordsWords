@@ -8,12 +8,13 @@ from bs4 import BeautifulSoup
 import requests
 from pymongo import MongoClient
 
+
 BASE_URL = 'http://shakespeare.mit.edu/index.html'
 POOL_SIZE = 10
 
 # \w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*|(?:[.,:;!\'"()\[\]–—]|--)
 word_pattern = \
-    re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*(?:[.,:;!?–—]|-{2,})?')
+    re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*\s*(?:[.,:;!?–—]|-{2,})?')
 end_word_pattern = \
     re.compile(r'\w+(?:\'\w+)?(?:-\w+(?:\'\w+)?)*(?:[.,:;!?–—]|-{2,})+')
 
@@ -45,6 +46,7 @@ def make_markov_model(words):
         freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
     return ([{'word': word} for word in starters], freqs)
 
+
 def scrapeLink(work_url):
     words = []
     print('Scraping ' + work_url)
@@ -54,6 +56,7 @@ def scrapeLink(work_url):
         text = a.get_text().rstrip()
         words.extend(word_pattern.findall(text))
     return words
+
 
 def scrape_shakespeare():
     r = requests.get(BASE_URL)
@@ -130,10 +133,12 @@ if __name__ == '__main__':
             admin_client = MongoClient('mongodb+srv://admin:aaWyedsDgy03jcLc@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true')
             db = admin_client.get_database()
             rand_starters = db.starters.aggregate([{'$sample': {'size': 20}}])
-            rand_freqs = db.freqs.aggregate([{'$sample': {'size': 20}}])
+            rand_freqs = db.freqs.aggregate([{'$sample': {'size': 5}}])
             print('starters\n--------------------')
             print([word['word'] for word in rand_starters])
-            print('freqs\n--------------------')
-            print([{'word': rel['word'], 'freq': rel['freq']} for rel in rand_freqs])
+            print('\nfreqs\n--------------------')
+            print([{'word': rel['word'], 'freqs': rel['freqs']} for rel in rand_freqs])
+        elif arg == '--help':
+            print('Possible commands:\n    --update-db\n    --sample-data')
         else:
             raise Exception('Invalid flag: ' + sys.argv[1])
