@@ -6,11 +6,10 @@ import os
 import sys
 
 from bs4 import BeautifulSoup
+from pymongo import MongoClient
 import requests
 
-MONGO_URI = "mongodb://admin:<password>@cluster0-shard-00-00-kwnae.gcp.mongodb.net:27017,cluster0-shard-00-01-kwnae.gcp.mongodb.net:27017,cluster0-shard-00-02-kwnae.gcp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true"
-
-
+MONGO_URI = 'mongodb://admin:aaWyedsDgy03jcLc@cluster0-shard-00-00-kwnae.gcp.mongodb.net:27017,cluster0-shard-00-01-kwnae.gcp.mongodb.net:27017,cluster0-shard-00-02-kwnae.gcp.mongodb.net:27017/markov?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true'
 BASE_URL = 'http://shakespeare.mit.edu/index.html'
 POOL_SIZE = 10
 
@@ -52,11 +51,16 @@ def make_markov_model(words, presets):
             last_was_end = False
     for i in range(len(words) - 1):
         grams[words[i]][(words[i + 1])] += 1
-    freqs = presets
+    freqs = []
+    # freqs = presets
+    for word, word_freqs in presets.items():
+        freqs.append({'word': word, 'freqs': word_freqs})
+    # freqs = presets
     for word, occ_dict in grams.items():
         total_occ = sum(occ_dict.values())
-        freqs[word] = [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]
-    return list(starters), freqs
+        freqs.append({'word': word, 'freqs': [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]})
+        # freqs[word] = [{'word': word, 'freq': count / total_occ} for word, count in occ_dict.items()]
+    return [{'word': word} for word in starters], freqs
 
 
 def scrapeLink(work_url):
@@ -141,23 +145,27 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         arg = sys.argv[1]
         if arg == '--help':
-            commands = ['help', 'sample-data', 'write-files', 'update-db']
+            commands = ['help', 'write-files', 'test-db', 'sample-data', 'update-db']
             print('Possible commands:\n' + '\n'.join(['    --' + command for command in commands]))
-        elif arg == '--sample-data':
-            print('This function is currently unavailable')
-            # admin_client = MongoClient(MONGO_ADMIN_URI)
-            # db = admin_client.markov
-            # rand_starters = db.starters.aggregate([{'$sample': {'size': 20}}])
-            # rand_freqs = db.freqs.aggregate([{'$sample': {'size': 5}}])
-            # print('starters\n--------------------')
-            # print(list(rand_starters))
-            # print('\nfreqs\n--------------------')
-            # print(list(rand_freqs))
-        elif arg == '--update-db':
-            print('This function is currently unavailable')
-            # admin_client = MongoClient(MONGO_ADMIN_URI)
-            # update_db(admin_client.markov)
         elif arg == '--write-files':
             write_files()
+        elif arg == '--test-db':
+            admin_client = MongoClient(MONGO_URI)
+            print('Fetching database names:')
+            print([name for name in admin_client.list_databases()])
+            print('\nFetching collection names in markov:')
+            print([name for name in admin_client.markov.list_collections()])
+        elif arg == '--sample-data':
+            admin_client = MongoClient(MONGO_URI)
+            db = admin_client.markov
+            rand_starters = db.starters.aggregate([{'$sample': {'size': 20}}])
+            rand_freqs = db.freqs.aggregate([{'$sample': {'size': 5}}])
+            print('starters\n--------------------')
+            print(list(rand_starters))
+            print('\nfreqs\n--------------------')
+            print(list(rand_freqs))
+        elif arg == '--update-db':
+            admin_client = MongoClient(MONGO_URI)
+            update_db(admin_client.markov)
         else:
             raise Exception('Invalid flag: ' + sys.argv[1])
