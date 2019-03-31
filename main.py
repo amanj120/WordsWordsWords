@@ -6,13 +6,9 @@ from flask import Flask, jsonify
 
 STARTER_SIZE = 10
 RANDOM_SIZE = 100
-# MONGO_URI = 'mongodb+srv://words_app:vQy9e9PUZA6ZWPMm@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true'
 
 
 app = Flask(__name__)
-# app.config['MONGO_URI'] = MONGO_URI
-# mongo = PyMongo(app)
-# db = MongoClient(MONGO_URI).get_database()
 
 
 with open('starters.json', 'r') as starters_file:
@@ -48,11 +44,11 @@ def starters():
 
 @app.route('/<other>')
 def handleIllegalRequest(_):
-    return "405: Restricted method"
+    return '405: Restricted method'
 
 @app.route('/ping')
 def ping():
-    return "on database: " + 'null' # db.name
+    return 'ping'
 
 
 '''
