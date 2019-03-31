@@ -1,50 +1,63 @@
-from flask import request
-from flask import Flask
-#from flask_pymongo import PyMongo
-from flask import jsonify
-import random
+import re
+
+from flask import Flask, jsonify
+from pymongo import MongoClient
+from nltk.corpus import wordnet
+
+
+STARTER_SIZE = 20
+RANDOM_SIZE = 20
+MONGO_URI = 'mongodb+srv://words_app:vQy9e9PUZA6ZWPMm@cluster0-kwnae.gcp.mongodb.net/markov?retryWrites=true'
 
 
 app = Flask(__name__)
-#app.config.from_object('configurations.DevelopmentConfig')
-#mongo = PyMongo(app)
+# app.config['MONGO_URI'] = MONGO_URI
+# mongo = PyMongo(app)
+db = MongoClient(MONGO_URI).get_database()
 
+
+def synonyms(word):
+    syn_sets = wordnet.synsets(word)
+    synonyms = set()
+    for syn_set in syn_sets or []:
+        for lemma in syn_set.lemmas():
+            synonyms.add(lemma.name())
+    return synonyms
 
 @app.route('/')
-def landingPage():
-    return 'welcome to words words words,\n a shakespeare markov chain api'
+def index():
+    return 'Welcome to WordsWordsWords,\n a Shakespeare Markov Chain API'
 
-@app.route('/getword/<word>')
-def getwords(word):
-    return jsonify(backendGetWords(word))
+@app.route('/words/<word>')
+def words(word):
+    word_regex = re.compile(re.escape(word), re.IGNORECASE)
+    word_relation = db.freqs.find_one({'word': word_regex})
 
-@app.route('/getstart')
-def getstart():
-    return jsonify(backendGetStart())
+    if not word_relation:
+        # Sample random documents from database
+        rand_relations = db.freqs.aggregate([{'$sample': {'size': RANDOM_SIZE}}])
+        # Extract the 'word' property from each of the documents
+        word_list = [rand_relation['word'] for rand_relation in rand_relations]
+        freq = 1 / len(word_list)
+        return jsonify([{'word': word, 'freq': freq} for word in word_list])
 
-def backendGetWords(word):
-    ret = []
-    max = random.randint(1,10)
-    for i in range(max):
-        ret.append(word)
-    ret.append("is a good")
-    ret.append("word")
-    return ret
+    # Extract the list of words and frequencies from this word's relations
+    freq_pairs = word_relation['freqs']
+    # Sort in descending order of frequency
+    freq_pairs.sort(key=lambda f: -f['freq'])
+    return jsonify(freq_pairs)
 
-def backendGetStart():
-    ret = ["hello", "my", "name"]
-    max = random.randint(1,10)
-    for i in range(max):
-        ret.append("is lkjd")
-    return ret;
+@app.route('/starters')
+def starters():
+    rand_words = db.starters.aggregate([{'$sample': {'size': 20}}])
+    # Extract 'word' property of each of the queried documents
+    word_list = [word['word'] for word in rand_words]
+    return jsonify(word_list)
 
 @app.route('/<other>')
-def handleIllegalRequest(other):
-    return "6969"
+def handleIllegalRequest(_):
+    return "405: Restricted method"
 
 @app.route('/ping')
 def ping():
-    return 'ping'
-
-if __name__ == '__main__':
-    app.run()
+    return "on database: " + db.name
