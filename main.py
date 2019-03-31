@@ -42,7 +42,8 @@ def words(word):
 @app.route('/starters')
 def starters():
     rand_words = random.sample(starter_list, STARTER_SIZE)
-    return jsonify(rand_words)
+    freq = 1 / len(rand_words)
+    return jsonify([{'word': word, 'freq': freq} for word in rand_words])
 
 @app.route('/<other>')
 def handleIllegalRequest(other):
